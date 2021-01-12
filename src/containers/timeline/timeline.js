@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@apollo/client'
 
 import Year from '../../components/year'
@@ -14,7 +14,7 @@ import GET_COLLECTION from '../../api/queries/getCollection'
 const step = { current: 0 }
 
 const Timeline = () => {
-  const [year, updateYear] = useState(new Date().getFullYear())
+  const [year, updateYear] = useState('')
   const page = useRef(step.current)
 
   const { data, loading, error, fetchMore } = useQuery(
@@ -27,6 +27,17 @@ const Timeline = () => {
       },
     }
   )
+
+  useEffect(() => {
+    if (data && data.blogPosts && data.blogPosts.items.length > 0) {
+      const firstDate = data.blogPosts.items[0].date
+
+      if (year.length <= 0) {
+        // Always set initial date to first in list
+        updateYear(new Date(firstDate).getFullYear())
+      }
+    }
+  }, [data])
 
   if (loading) return <Loader />
   if (error) return <Error />

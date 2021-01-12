@@ -87,8 +87,11 @@ describe('[Container] Timeline', () => {
     expect(screen.getByAltText('Title 1')).toBeInTheDocument()
     expect(screen.getByAltText('Title 2')).toBeInTheDocument()
 
-    const currentYear = new Date().getFullYear()
-    expect(screen.getByText(currentYear)).toBeInTheDocument()
+    const { result } = timelineMock
+    const dateString = result.data.blogPosts.items[0].date
+    const dateYear = new Date(dateString).getFullYear()
+
+    expect(screen.getByText(dateYear)).toBeInTheDocument()
   })
 })
 
