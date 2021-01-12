@@ -1,0 +1,8 @@
+# Dependencies
+node_modules/
+
+# Build path for server
+build/
+
+# Build path for client
+public/

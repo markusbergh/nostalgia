@@ -1,0 +1,24 @@
+.description__wrapper {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+}
+
+.description__text {
+  grid-column: 5/12;
+}
+
+.description__text p {
+  font-size: 4rem;
+}
+
+@media screen and (max-width: 1440px) {
+  .description__text p {
+    font-size: 2.5rem;
+  } 
+}
+
+@media screen and (max-width: 1024px) {
+  .description__text p {
+    font-size: 3rem;
+  } 
+}

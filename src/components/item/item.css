@@ -1,0 +1,12 @@
+.item__wrapper {
+  overflow: hidden;
+}
+
+.item__image {
+  display: block;
+  width: 100%;
+  transform: scale(1.1);
+  transition: filter 450ms ease-out;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
