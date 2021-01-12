@@ -9,12 +9,14 @@ import Error from '../../components/error'
 import GlobalStateContext from '../../context/global'
 
 import GET_COLLECTION from '../../api/queries/getCollection'
+import Spinner from '../../components/spinner'
 
 // Needed to keep track of current `page`
 const step = { current: 0 }
 
 const Timeline = () => {
   const [year, updateYear] = useState('')
+  const [spinning, setSpinning] = useState(false)
   const page = useRef(step.current)
 
   const { data, loading, error, fetchMore } = useQuery(
@@ -38,6 +40,23 @@ const Timeline = () => {
       }
     }
   }, [data])
+
+  useEffect(() => {
+    if (!spinning) {
+      return
+    }
+
+    const hideSpinner = () => {
+      setSpinning(false)
+    }
+
+    // Wait a tiny bit before hiding
+    const spinnerTimeout = setTimeout(hideSpinner, 500)
+
+    return () => {
+      clearTimeout(spinnerTimeout)
+    }
+  }, [spinning])
 
   if (loading) return <Loader />
   if (error) return <Error />
@@ -63,9 +82,14 @@ const Timeline = () => {
           fetchMore({
             variables: { skip: newPage },
           })
+
+          // Show spinner
+          setSpinning(true)
         }}
+        onHideSpinner={() => setSpinning(false)}
       />
       <Year />
+      {spinning && <Spinner />}
     </GlobalStateContext.Provider>
   )
 }
