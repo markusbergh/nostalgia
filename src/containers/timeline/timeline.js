@@ -10,11 +10,12 @@ import GlobalStateContext from '../../context/global'
 
 import GET_COLLECTION from '../../api/queries/getCollection'
 
+// Needed to keep track of current `page`
+const step = { current: 0 }
+
 const Timeline = () => {
   const [year, updateYear] = useState(new Date().getFullYear())
-
-  // Needed to keep track of current `page`
-  const page = useRef(0)
+  const page = useRef(step.current)
 
   const { data, loading, error, fetchMore } = useQuery(
     GET_COLLECTION,
@@ -41,7 +42,12 @@ const Timeline = () => {
         items={data.blogPosts.items}
         onLoadMore={() => {
           const newPage = page.current + 5
+
+          // Update ref
           page.current = newPage
+
+          // Update holder of current page, maybe this should be set in props?
+          step.current = newPage
 
           fetchMore({
             variables: { skip: newPage },
