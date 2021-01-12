@@ -16,8 +16,9 @@ import {
   HttpLink,
 } from '@apollo/client'
 
-import { getDataFromTree } from '@apollo/client/react/ssr'
+import { renderToStringWithData } from '@apollo/client/react/ssr'
 
+import cache from './api/cache.js'
 import App from './app.js'
 
 const isDev = process.env.NODE_ENV === 'development'
@@ -66,8 +67,13 @@ app.get('/*', (req, res) => {
       fetchOptions: {
         mode: 'no-cors',
       },
+      defaultOptions: {
+        watchQuery: {
+          fetchPolicy: 'network-only',
+        },
+      },
     }),
-    cache: new InMemoryCache(),
+    cache,
   })
 
   const context = {}
@@ -80,15 +86,12 @@ app.get('/*', (req, res) => {
     </StaticRouter>
   )
 
-  getDataFromTree(Root).then(() => {
+  renderToStringWithData(Root).then(appDataToRender => {
     const initialState = client.extract()
     const parsedState = JSON.stringify(initialState).replace(
       /</g,
       '\\u003c'
     )
-
-    // We are ready to render
-    const appDataToRender = renderToString(Root)
 
     // Get bundle names for static files
     const { cssPath, jsPath } = getPaths()

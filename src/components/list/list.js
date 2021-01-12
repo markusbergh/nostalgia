@@ -1,11 +1,56 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 
 import Item from '../item'
 
 import styles from './list.css'
 
-const List = ({ items }) => {
+const List = ({ items, onLoadMore }) => {
+  const listRef = useRef()
+  const scrollHeight = useRef(null)
+
+  const [allImagesLoaded, setAllImagesLoaded] = useState(false)
+  const imagesLoadedRef = useRef(0)
+
+  const onImageInitialLoad = () => {
+    imagesLoadedRef.current = imagesLoadedRef.current + 1
+
+    if (imagesLoadedRef.current == items.length - 1) {
+      setAllImagesLoaded(true)
+    }
+  }
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!scrollHeight.current) return
+
+      const pageY = window.pageYOffset
+      const viewportHeight = window.innerHeight
+
+      if (pageY + viewportHeight >= scrollHeight.current) {
+        onLoadMore()
+
+        // Reset
+        scrollHeight.current = null
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (allImagesLoaded) {
+      scrollHeight.current = listRef.current.clientHeight
+
+      // Reset
+      setAllImagesLoaded(false)
+    }
+  }, [allImagesLoaded])
+
   const posts = items.map(item => {
     const {
       sys,
@@ -30,11 +75,16 @@ const List = ({ items }) => {
         gridSpan={gridSpan}
         lowRes={lowRes.url}
         highRes={highRes.url}
+        onImageInitialLoad={onImageInitialLoad}
       />
     )
   })
 
-  return <ul className={styles.list}>{posts}</ul>
+  return (
+    <ul ref={listRef} className={styles.list}>
+      {posts}
+    </ul>
+  )
 }
 
 List.propTypes = {

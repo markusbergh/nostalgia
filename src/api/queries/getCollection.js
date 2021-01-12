@@ -4,8 +4,8 @@ const lowResWidth = 250
 const highResWidth = 1500
 
 const GET_COLLECTION = gql`
-  query GetCollection($order: [BlogPostOrder]) {
-    blogPosts: blogPostCollection(order: $order) {
+  query GetCollection($order: [BlogPostOrder], $skip: Int, $limit: Int!) {
+    blogPosts: blogPostCollection(order: $order, skip: $skip, limit: $limit) {
       items {
         sys {
           id

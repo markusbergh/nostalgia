@@ -1,8 +1,6 @@
-import {
-  ApolloClient,
-  InMemoryCache,
-  createHttpLink,
-} from '@apollo/client'
+import { ApolloClient, createHttpLink } from '@apollo/client'
+
+import cache from './cache'
 
 const spaceId = process.env.CONTENTFUL_SPACE_ID
 const uri = process.env.GRAPHQL_URI.replace('{SPACE}', spaceId)
@@ -15,7 +13,12 @@ const client = new ApolloClient({
       authorization: `Bearer ${accessToken}`,
     },
   }),
-  cache: new InMemoryCache().restore(window.__APOLLO_STATE__ || {}),
+  cache: cache.restore(window.__APOLLO_STATE__ || {}),
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: 'network-only',
+    },
+  },
   ssrForceFetchDelay: 300,
 })
 

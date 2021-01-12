@@ -20,6 +20,7 @@ describe('[Container] Timeline', () => {
       query: GET_COLLECTION,
       variables: {
         order: 'date_DESC',
+        limit: 5,
       },
     },
     result: {

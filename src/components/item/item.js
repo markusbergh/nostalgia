@@ -6,11 +6,22 @@ import GlobalStateContext from '../../context/global'
 
 import styles from './item.css'
 
-const Item = ({ title, date, lowRes, highRes, gridSpan }) => {
+const Item = ({
+  title,
+  date,
+  lowRes,
+  highRes,
+  gridSpan,
+  onImageInitialLoad,
+}) => {
+  // Used to update year
   const globalContext = useContext(GlobalStateContext)
 
   // Used in image transition from lower to higher resolution
   const [imageLoaded, setImageLoaded] = useState(false)
+
+  // Set when the initial low resolution image has loaded
+  const [initialImageLoaded, setInitialImageLoaded] = useState(false)
 
   // Always start with the lower resolution image
   const [imageUrl, setImageUrl] = useState(lowRes)
@@ -21,7 +32,16 @@ const Item = ({ title, date, lowRes, highRes, gridSpan }) => {
   })
 
   // We can now do the image transition
-  const handleOnLoad = () => setImageLoaded(true)
+  const handleOnLoad = () => {
+    setImageLoaded(true)
+
+    if (!initialImageLoaded) {
+      setInitialImageLoaded(true)
+
+      // Used ultimately in list component to set scroll height
+      onImageInitialLoad()
+    }
+  }
 
   // Set new date in global context
   const updateYear = () => {
