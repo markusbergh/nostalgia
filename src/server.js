@@ -1,5 +1,3 @@
-require('dotenv').config()
-
 import express from 'express'
 import path from 'path'
 import fetch from 'cross-fetch'

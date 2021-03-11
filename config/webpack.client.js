@@ -1,17 +1,9 @@
 const path = require('path')
-const dotenv = require('dotenv')
 const webpack = require('webpack')
 
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
-const env = dotenv.config().parsed
-
-// Helper function to set environmental keys
-const envKeys = Object.keys(env).reduce((prev, next) => {
-  prev[`process.env.${next}`] = JSON.stringify(env[next])
-
-  return prev
-}, {})
+const keys = require('./webpack.env')
 
 const config = {
   // Target environment for bundling
@@ -56,8 +48,8 @@ const config = {
   },
 
   plugins: [
-    // Get environment keys for the client
-    new webpack.DefinePlugin(envKeys),
+    // Set environment keys for the client
+    new webpack.DefinePlugin(keys),
     new CleanWebpackPlugin(),
   ],
 }
