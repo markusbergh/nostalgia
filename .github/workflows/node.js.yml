@@ -22,3 +22,30 @@ jobs:
           node-version: 14.x
       - run: npm ci
       - run: npm test
+
+  e2e:
+    name: End-to-end testing [Cypress]
+
+    runs-on: ubuntu-latest
+
+    # For more information: https://github.com/cypress-io/cypress-docker-images
+    container:
+      image: cypress/browsers:node12.18.3-chrome87-ff82
+      env:
+        CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID }}
+        CONTENTFUL_DELIVERY_ACCESS_TOKEN: ${{ secrets.CONTENTFUL_DELIVERY_ACCESS_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm ci
+      - name: Set keys for application
+        run: |
+          sed -i 's/CONTENTFUL_SPACE_ID=/CONTENTFUL_SPACE_ID='$CONTENTFUL_SPACE_ID'/g' .env
+          sed -i 's/CONTENTFUL_DELIVERY_ACCESS_TOKEN=/CONTENTFUL_DELIVERY_ACCESS_TOKEN='$CONTENTFUL_DELIVERY_ACCESS_TOKEN'/g' .env
+      - name: Build application
+        run: npm run build
+      - name: Start application
+        run: npm run start:build &
+      - name: Run Cypress
+        run: npm run e2e:build
