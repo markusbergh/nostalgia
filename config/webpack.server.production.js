@@ -32,6 +32,9 @@ const config = {
     libraryTarget: 'commonjs2',
   },
 
+  // No need to output so much information
+  stats: 'errors-warnings',
+
   module: {
     rules: [
       {

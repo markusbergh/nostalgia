@@ -32,6 +32,9 @@ const config = {
     publicPath: '/',
   },
 
+  // No need to output so much information
+  stats: 'errors-warnings',
+
   module: {
     rules: [
       {
